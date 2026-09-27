@@ -1,0 +1,17 @@
+# contracts
+contracts/out/
+contracts/cache/
+contracts/broadcast/*/31337/
+contracts/broadcast/**/dry-run/
+
+# env
+.env
+.env.*
+!.env.example
+
+# os / editors
+.DS_Store
+.vscode/
+.idea/
+
+node_modules/
