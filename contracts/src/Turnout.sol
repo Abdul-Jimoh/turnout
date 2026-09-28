@@ -351,20 +351,7 @@ contract Turnout is EIP712, ReentrancyGuard {
         if (deadline < block.timestamp || deadline > block.timestamp + MAX_SIGNATURE_TTL) revert InvalidDeadline();
         if (!_signedBy(holder, checkInDigest(ticketIds, deadline), signature)) revert InvalidSignature();
 
-        Tier[] storage tiers = _tiers[eventId];
-        uint256 amount;
-        uint32 count;
-        for (uint256 i; i < n; ++i) {
-            Ticket storage t = _tickets[ticketIds[i]];
-            if (t.eventId != eventId || t.holder != holder) revert TicketMismatch();
-            if (t.status != TicketStatus.Valid) revert TicketNotValid();
-
-            t.status = TicketStatus.CheckedIn;
-            amount += tiers[t.tier].price;
-            ++count;
-
-            emit CheckedIn(eventId, ticketIds[i], msg.sender);
-        }
+        (uint256 amount, uint32 count) = _markCheckedIn(eventId, holder, ticketIds);
 
         e.checkedInCount += count;
         e.checkedInAmount += amount;
@@ -461,6 +448,24 @@ contract Turnout is EIP712, ReentrancyGuard {
     function _refundOpen(Event storage e) private view returns (bool) {
         if (e.cancelled) return true;
         return block.timestamp > e.endTime && block.timestamp <= e.endTime + CLAIM_WINDOW;
+    }
+
+    function _markCheckedIn(uint256 eventId, address holder, uint256[] calldata ticketIds)
+        private
+        returns (uint256 amount, uint32 count)
+    {
+        Tier[] storage tiers = _tiers[eventId];
+        for (uint256 i; i < ticketIds.length; ++i) {
+            Ticket storage t = _tickets[ticketIds[i]];
+            if (t.eventId != eventId || t.holder != holder) revert TicketMismatch();
+            if (t.status != TicketStatus.Valid) revert TicketNotValid();
+
+            t.status = TicketStatus.CheckedIn;
+            amount += tiers[t.tier].price;
+            ++count;
+
+            emit CheckedIn(eventId, ticketIds[i], msg.sender);
+        }
     }
 
     // A plain ECDSA signature from the holder is always accepted, even if the account has code, so that

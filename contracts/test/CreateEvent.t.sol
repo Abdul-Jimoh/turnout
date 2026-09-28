@@ -167,6 +167,27 @@ contract CreateEventTest is BaseTest {
         turnout.updateEventDetails(id, "Mine now", "", "");
     }
 
+    function test_RevertWhen_UpdateDetailsAfterCancel() public {
+        uint256 id = _createEvent();
+        vm.startPrank(host);
+        turnout.cancelEvent(id);
+        vm.expectRevert(Turnout.EventIsCancelled.selector);
+        turnout.updateEventDetails(id, "Back on", "", "");
+        vm.stopPrank();
+    }
+
+    function test_RevertWhen_VenueTooLong() public {
+        Turnout.EventInput memory input = _input();
+        input.venue = string(new bytes(201));
+        vm.expectRevert(Turnout.InvalidDetails.selector);
+        _createEvent(input);
+    }
+
+    function test_RevertWhen_TicketNotFound() public {
+        vm.expectRevert(Turnout.InvalidTicket.selector);
+        turnout.getTicket(1);
+    }
+
     function test_RevertWhen_EventNotFound() public {
         vm.expectRevert(Turnout.EventNotFound.selector);
         turnout.getEvent(42);

@@ -150,6 +150,13 @@ contract SettlementTest is BaseTest {
         turnout.claimRefund(_ids(mine[0], mine[0]), buyer);
     }
 
+    function test_RevertWhen_RefundingNothing() public {
+        _warpToClaimWindow();
+        vm.prank(buyer);
+        vm.expectRevert(Turnout.InvalidQuantity.selector);
+        turnout.claimRefund(new uint256[](0), buyer);
+    }
+
     function test_RevertWhen_RefundToZeroAddress() public {
         _warpToClaimWindow();
         vm.prank(buyer);
