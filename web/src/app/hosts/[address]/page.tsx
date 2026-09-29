@@ -5,7 +5,7 @@ import { isAddress, type Address } from "viem";
 import { EventCard, EventCardSkeleton, eventGrid } from "@/components/event-card";
 import { Reveal } from "@/components/motion";
 import { PageHeader, StatBox } from "@/components/page";
-import { ButtonLink, Empty, Label } from "@/components/ui";
+import { ButtonLink, Empty, Joined, Label } from "@/components/ui";
 import { explorerUrl } from "@/lib/config";
 import { phaseOf } from "@/lib/events";
 import { shortAddress } from "@/lib/format";
@@ -37,7 +37,7 @@ function Profile({ host }: { host: Address }) {
 
   return (
     <>
-      <PageHeader label={`Host // ${shortAddress(host)}`} title={name || shortAddress(host)}>
+      <PageHeader label={<Joined parts={["Host", shortAddress(host)]} />} title={name || shortAddress(host)}>
         {explorerUrl && (
           <a href={`${explorerUrl}/address/${host}`} target="_blank" rel="noreferrer" className="label underline underline-offset-4">
             View wallet on explorer ↗

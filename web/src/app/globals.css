@@ -115,6 +115,12 @@ body {
   animation: blink 1.4s steps(2) infinite;
 }
 
+/* SplitText line masks clip overflow; pad them so tight display leading doesn't shave glyph edges */
+.split-line-mask {
+  padding: 0.12em 0.08em;
+  margin: -0.12em -0.08em;
+}
+
 /* Hidden until GSAP reveals it, but only when JS and motion are available */
 .js [data-reveal] {
   visibility: hidden;

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { phaseOf, type Tier, type TurnoutEvent } from "@/lib/events";
 import { eventDay, eventTime, usdc } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
-import { PhaseTag, Poster, Skeleton } from "./ui";
+import { PhaseTag, Poster, Sep, Skeleton } from "./ui";
 
 export function EventCard({ event, tiers }: { event: TurnoutEvent; tiers: Tier[] }) {
   const now = useNow(30_000);
@@ -23,7 +23,7 @@ export function EventCard({ event, tiers }: { event: TurnoutEvent; tiers: Tier[]
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
         <span className="label text-ink-2">
-          {eventDay(event.startTime)}{" // "}{eventTime(event.startTime)}
+          {eventDay(event.startTime)}<Sep />{eventTime(event.startTime)}
         </span>
         <h3 className="headline text-2xl leading-[0.95] tracking-[-0.03em]">{event.name}</h3>
         {event.venue && <p className="text-sm text-ink-2">{event.venue}</p>}

@@ -6,7 +6,7 @@ import { useAccount } from "wagmi";
 import { Reveal } from "./motion";
 import { Button, Label } from "./ui";
 
-export function PageHeader({ label, title, children }: { label: string; title: ReactNode; children?: ReactNode }) {
+export function PageHeader({ label, title, children }: { label: ReactNode; title: ReactNode; children?: ReactNode }) {
   return (
     <section className="gutter flex flex-col gap-6 border-b border-ink pt-10 pb-8 md:pt-14">
       <Reveal as="span" className="label text-ink-2">
@@ -28,7 +28,7 @@ export function RequireWallet({ reason, children }: { reason: string; children: 
   return (
     <section className="gutter py-16">
       <div className="flex flex-col items-start gap-6 border border-ink p-8 sm:p-12">
-        <Label>{"Wallet needed //"}</Label>
+        <Label>Wallet needed</Label>
         <p className="headline max-w-2xl text-4xl sm:text-5xl">{reason}</p>
         <ConnectButton.Custom>
           {({ openConnectModal }) => <Button onClick={openConnectModal}>Connect wallet</Button>}

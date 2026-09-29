@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAccount } from "wagmi";
 import { Reveal } from "@/components/motion";
 import { PageHeader, RequireWallet } from "@/components/page";
-import { Button, ButtonLink, Empty, Label, PhaseTag, Poster, Skeleton, TxStatus } from "@/components/ui";
+import { Button, ButtonLink, Empty, Joined, Label, PhaseTag, Poster, Skeleton, TxStatus } from "@/components/ui";
 import { CLAIM_WINDOW } from "@/lib/config";
 import { phaseOf, TicketStatus, ticketRefundable, ticketStatusLabel, type Ticket, type Tier, type TurnoutEvent } from "@/lib/events";
 import { duration, eventDay, eventTime, usdc } from "@/lib/format";
@@ -13,7 +13,7 @@ import { useBuyerTickets, useNow, useTurnoutTx } from "@/lib/hooks";
 export default function TicketsPage() {
   return (
     <>
-      <PageHeader label="Held by your wallet // Escrowed until the door" title="My tickets" />
+      <PageHeader label={<Joined parts={["Held by your wallet", "Escrowed until the door"]} />} title="My tickets" />
       <RequireWallet reason="Connect the wallet you bought with to see your tickets.">
         <TicketList />
       </RequireWallet>
@@ -79,7 +79,7 @@ function EventTickets({ event, tiers, tickets }: { event: TurnoutEvent; tiers: T
         <header className="flex flex-col gap-3 border-b border-ink p-4 sm:flex-row sm:items-start sm:justify-between md:p-6">
           <div className="flex flex-col gap-2">
             <Label>
-              {eventDay(event.startTime)}{" // "}{eventTime(event.startTime)} {event.venue && `// ${event.venue}`}
+              <Joined parts={[eventDay(event.startTime), eventTime(event.startTime), event.venue]} />
             </Label>
             <Link href={`/events/${event.id}`} className="headline text-3xl tracking-[-0.03em] hover:underline sm:text-4xl">
               {event.name}

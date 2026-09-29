@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { parseEventLogs } from "viem";
 import { PageHeader, RequireWallet } from "@/components/page";
-import { Button, Field, inputClass, Label, TxStatus } from "@/components/ui";
+import { Button, Field, inputClass, Joined, Label, TxStatus } from "@/components/ui";
 import { turnoutAbi } from "@/lib/abi";
 import { DEFAULT_CHECK_IN_LEAD, MAX_TIERS } from "@/lib/config";
 import { eventDay, eventTime, parseUsdc, toDatetimeLocal, usdc } from "@/lib/format";
@@ -19,7 +19,7 @@ const MAX_DURATION = 30 * 24 * 60 * 60;
 export default function NewEventPage() {
   return (
     <>
-      <PageHeader label="New event // Locked in once created" title="Create" />
+      <PageHeader label={<Joined parts={["New event", "Locked in once created"]} />} title="Create" />
       <RequireWallet reason="Connect the wallet that should receive ticket money.">
         <EventForm />
       </RequireWallet>
@@ -252,7 +252,7 @@ function EventForm() {
 
       <aside className="hidden border-l border-ink lg:block">
         <div className="sticky top-20 flex flex-col gap-4 p-6">
-          <Label>{"Preview //"}</Label>
+          <Label>Preview</Label>
           <div className="flex flex-col border border-ink bg-white">
             <div className="aspect-4/5 overflow-hidden border-b border-ink bg-paper-2">
               {preview ? (
@@ -267,7 +267,7 @@ function EventForm() {
             </div>
             <div className="flex flex-col gap-2 p-4">
               <span className="label text-ink-2">
-                {Number.isFinite(startTs) ? `${eventDay(startTs)} // ${eventTime(startTs)}` : "Pick a date"}
+                {Number.isFinite(startTs) ? <Joined parts={[eventDay(startTs), eventTime(startTs)]} /> : "Pick a date"}
               </span>
               <span className="headline text-2xl tracking-[-0.03em]">{name || "Event name"}</span>
               {venue && <span className="text-sm text-ink-2">{venue}</span>}
@@ -294,7 +294,7 @@ function FormSection({ index, title, children }: { index: string; title: string;
   return (
     <section className="gutter grid gap-6 border-b border-ink py-8 md:grid-cols-[10rem_1fr] md:py-10">
       <div className="flex flex-col gap-1">
-        <Label>{`${index} //`}</Label>
+        <Label>{index}</Label>
         <h2 className="headline text-3xl">{title}</h2>
       </div>
       <div className="flex flex-col gap-5">{children}</div>
@@ -337,7 +337,7 @@ function PosterPicker({ preview, onPick, onClear }: { preview: string | null; on
         ) : (
           <button type="button" onClick={() => input.current?.click()} className="flex flex-col items-center gap-2 p-6 text-center">
             <span className="headline text-2xl">Drop a poster</span>
-            <span className="label text-ink-2">or tap to choose // 4:5 works best</span>
+            <span className="label text-ink-2"><Joined parts={["or tap to choose", "4:5 works best"]} /></span>
           </button>
         )}
       </div>

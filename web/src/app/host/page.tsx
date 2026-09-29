@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { Reveal } from "@/components/motion";
 import { PageHeader, RequireWallet, StatBox } from "@/components/page";
-import { Button, ButtonLink, Empty, inputClass, Label, PhaseTag, Poster, Skeleton, TxStatus } from "@/components/ui";
+import { Button, ButtonLink, Empty, inputClass, Joined, Label, PhaseTag, Poster, Sep, Skeleton, TxStatus } from "@/components/ui";
 import { phaseOf, withdrawable, type Tier, type TurnoutEvent } from "@/lib/events";
 import { eventDay, eventTime, usdc } from "@/lib/format";
 import { useHostEvents, useHostProfile, useNow, useTurnoutTx } from "@/lib/hooks";
@@ -13,7 +13,7 @@ import { useHostEvents, useHostProfile, useNow, useTurnoutTx } from "@/lib/hooks
 export default function HostPage() {
   return (
     <>
-      <PageHeader label="Your events // Your escrow" title="Host">
+      <PageHeader label={<Joined parts={["Your events", "Your escrow"]} />} title="Host">
         <ButtonLink href="/host/new" variant="signal">
           + Create event
         </ButtonLink>
@@ -126,7 +126,7 @@ function HostEventRow({ event, tiers, now }: { event: TurnoutEvent; tiers: Tier[
         <div className="flex flex-wrap items-center gap-2">
           <PhaseTag phase={phase} />
           <Label>
-            {eventDay(event.startTime)}{" // "}{eventTime(event.startTime)}
+            {eventDay(event.startTime)}<Sep />{eventTime(event.startTime)}
           </Label>
         </div>
         <span className="headline truncate text-2xl tracking-[-0.03em] sm:text-3xl">{event.name}</span>

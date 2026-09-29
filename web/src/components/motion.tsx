@@ -65,6 +65,7 @@ export function Reveal({ as = "div", type = "fade", delay = 0, onScroll = true, 
         gsap.set(el, { autoAlpha: 1 });
         SplitText.create(el, {
           type: type === "chars" ? "lines,chars" : "lines",
+          linesClass: "split-line",
           mask: "lines",
           autoSplit: true,
           onSplit: (self) =>

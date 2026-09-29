@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
+import { Fragment, type ComponentProps, type ReactNode } from "react";
 import { explorerUrl } from "@/lib/config";
 import { phaseLabel, type Phase } from "@/lib/events";
 import { imageUrl } from "@/lib/ipfs";
@@ -26,6 +26,27 @@ export function Button({ variant = "ink", className = "", ...props }: ComponentP
 
 export function ButtonLink({ variant = "ink", className = "", ...props }: ComponentProps<typeof Link> & { variant?: Variant }) {
   return <Link className={`${base} ${variants[variant]} ${className}`} {...props} />;
+}
+
+export function Sep({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 12 12" aria-hidden className={`mx-[0.7em] inline-block size-[0.75em] shrink-0 -translate-y-[0.05em] align-middle ${className}`}>
+      <path d="M6 0C6.6 3.6 8.4 5.4 12 6C8.4 6.6 6.6 8.4 6 12C5.4 8.4 3.6 6.6 0 6C3.6 5.4 5.4 3.6 6 0Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function Joined({ parts }: { parts: ReactNode[] }) {
+  return (
+    <>
+      {parts.filter(Boolean).map((part, i) => (
+        <Fragment key={i}>
+          {i > 0 && <Sep />}
+          {part}
+        </Fragment>
+      ))}
+    </>
+  );
 }
 
 export function Label({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -55,7 +76,7 @@ export function Marquee({ items, className = "", speed = 40 }: { items: string[]
     <div className="flex shrink-0 items-center" aria-hidden={hidden}>
       {items.map((item, i) => (
         <span key={i} className="label flex items-center gap-10 pr-10 whitespace-nowrap">
-          <span className="opacity-50">{"//"}</span>
+          <Sep className="mx-0 opacity-60" />
           {item}
         </span>
       ))}
@@ -73,7 +94,7 @@ export function Marquee({ items, className = "", speed = 40 }: { items: string[]
   );
 }
 
-export function SectionHead({ index, title, aside }: { index: string; title: ReactNode; aside?: ReactNode }) {
+export function SectionHead({ index, title, aside }: { index: ReactNode; title: ReactNode; aside?: ReactNode }) {
   return (
     <div className="flex flex-col gap-4 border-b border-ink pb-6 md:flex-row md:items-end md:justify-between">
       <div className="flex flex-col gap-3">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { use, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import { RequireWallet, StatBox } from "@/components/page";
-import { Button, ButtonLink, Empty, Field, inputClass, Label, PhaseTag, Poster, Skeleton, TxStatus } from "@/components/ui";
+import { Button, ButtonLink, Empty, Field, inputClass, Joined, Label, PhaseTag, Poster, Sep, Skeleton, TxStatus } from "@/components/ui";
 import { CLAIM_WINDOW, explorerUrl } from "@/lib/config";
 import { phaseOf, TicketStatus, ticketStatusLabel, withdrawable, type Tier, type TurnoutEvent } from "@/lib/events";
 import { duration, eventDate, eventDay, eventTime, sameAddress, shortAddress, usdc } from "@/lib/format";
@@ -84,7 +84,7 @@ function Header({ event }: { event: TurnoutEvent }) {
         <div className="flex flex-wrap items-center gap-3">
           <PhaseTag phase={phaseOf(event, now)} />
           <Label>
-            {eventDay(event.startTime)}{" // "}{eventTime(event.startTime)}–{eventTime(event.endTime)}
+            {eventDay(event.startTime)}<Sep />{eventTime(event.startTime)}–{eventTime(event.endTime)}
           </Label>
         </div>
         <h1 className="display text-[clamp(3rem,10vw,7rem)] wrap-break-word">{event.name}</h1>
@@ -130,9 +130,9 @@ function Money({ event, tiers }: { event: TurnoutEvent; tiers: Tier[] }) {
         <StatBox
           label="Checked in"
           value={event.ticketCount ? `${Math.round((event.checkedInCount / event.ticketCount) * 100)}%` : "—"}
-          foot={`${event.checkedInCount} guests // ${usdc(event.checkedInAmount)}`}
+          foot={<Joined parts={[`${event.checkedInCount} guests`, usdc(event.checkedInAmount)]} />}
         />
-        <StatBox label="In escrow" value={usdc(escrow)} foot={`${event.refundedCount} refunded // ${usdc(event.withdrawnAmount)} withdrawn`} />
+        <StatBox label="In escrow" value={usdc(escrow)} foot={<Joined parts={[`${event.refundedCount} refunded`, `${usdc(event.withdrawnAmount)} withdrawn`]} />} />
         <StatBox label="Withdrawable now" value={usdc(ready)} tone="bg-signal" />
       </div>
       <div className="gutter flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
@@ -176,7 +176,7 @@ function Attendees({ event, tiers }: { event: TurnoutEvent; tiers: Tier[] }) {
     <section className="gutter flex flex-col gap-6 border-b border-ink py-10">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-1">
-          <Label>{"Guest list //"}</Label>
+          <Label>Guest list</Label>
           <h2 className="headline text-4xl">{event.ticketCount} tickets</h2>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -308,7 +308,7 @@ function EditDetails({ event }: { event: TurnoutEvent }) {
   return (
     <section className="gutter grid gap-6 border-b border-ink py-10 md:grid-cols-[14rem_1fr]">
       <div className="flex flex-col gap-2">
-        <Label>{"Details //"}</Label>
+        <Label>Details</Label>
         <h2 className="headline text-3xl">Edit</h2>
         <p className="text-sm text-ink-2">Name, venue, description and poster can change any time. Schedule and prices can&apos;t.</p>
       </div>
@@ -349,7 +349,7 @@ function Cancel({ event }: { event: TurnoutEvent }) {
 
   return (
     <section className="gutter flex flex-col gap-4 py-10">
-      <Label>{"Danger zone //"}</Label>
+      <Label>Danger zone</Label>
       <div className="flex flex-col gap-4 border border-alert p-6 md:flex-row md:items-center md:justify-between">
         <div className="flex max-w-xl flex-col gap-1">
           <span className="headline text-2xl">Cancel this event</span>

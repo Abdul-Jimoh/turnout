@@ -5,7 +5,7 @@ import { use, useState } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Reveal } from "@/components/motion";
-import { Button, ButtonLink, Empty, Label, PhaseTag, Poster, Skeleton, TxStatus } from "@/components/ui";
+import { Button, ButtonLink, Empty, Label, PhaseTag, Poster, Sep, Skeleton, TxStatus } from "@/components/ui";
 import { CLAIM_WINDOW, explorerUrl, turnoutAddress } from "@/lib/config";
 import { canBuy, phaseOf, TicketStatus, ticketStatusLabel, type Tier, type TurnoutEvent } from "@/lib/events";
 import { eventDate, eventDay, eventTime, sameAddress, shortAddress, usdc } from "@/lib/format";
@@ -43,7 +43,7 @@ export default function EventPage({ params }: { params: Promise<{ id: string }> 
   const phase = phaseOf(event, now);
 
   return (
-    <article className="grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+    <article className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       <div className="border-b border-ink lg:border-r lg:border-b-0">
         <div className="lg:sticky lg:top-20">
           <Reveal onScroll={false} className="aspect-4/5 max-h-[calc(100dvh-5rem)] w-full overflow-hidden">
@@ -57,7 +57,7 @@ export default function EventPage({ params }: { params: Promise<{ id: string }> 
           <div className="flex flex-wrap items-center gap-3">
             <PhaseTag phase={phase} />
             <Label>
-              {eventDay(event.startTime)}{" // "}{eventTime(event.startTime)}
+              {eventDay(event.startTime)}<Sep />{eventTime(event.startTime)}
             </Label>
           </div>
           <Reveal as="h1" type="lines" onScroll={false} className="display text-[clamp(3.5rem,11vw,8.5rem)] wrap-break-word">
@@ -85,7 +85,7 @@ export default function EventPage({ params }: { params: Promise<{ id: string }> 
 
         {event.description && (
           <section className="gutter flex flex-col gap-4 border-b border-ink py-8 md:py-10">
-            <Label>{"About //"}</Label>
+            <Label>About</Label>
             <p className="max-w-2xl text-lg leading-relaxed whitespace-pre-line">{event.description}</p>
           </section>
         )}
@@ -239,7 +239,7 @@ function MyTickets({ event, tiers }: { event: TurnoutEvent; tiers: Tier[] }) {
       <ul className="flex flex-wrap gap-2">
         {mine.map((t) => (
           <li key={t.id.toString()} className={`label border border-ink px-2 py-1 ${t.status === TicketStatus.CheckedIn ? "bg-signal" : ""}`}>
-            Nº {t.id.toString()}{" // "}{tiers[t.tier]?.name}{" // "}{ticketStatusLabel[t.status as TicketStatus]}
+            Nº {t.id.toString()}<Sep />{tiers[t.tier]?.name}<Sep />{ticketStatusLabel[t.status as TicketStatus]}
           </li>
         ))}
       </ul>
@@ -285,7 +285,7 @@ function HostCard({ event }: { event: TurnoutEvent }) {
 
   return (
     <section className="gutter flex flex-col gap-5 py-8 md:py-10">
-      <Label>{"Hosted by //"}</Label>
+      <Label>Hosted by</Label>
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1">
           <Link href={`/hosts/${event.host}`} className="headline text-4xl hover:underline">

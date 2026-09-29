@@ -6,8 +6,10 @@ import gsap from "gsap";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useAccount, useSwitchChain } from "wagmi";
 import { chain } from "@/lib/config";
+import { Joined } from "./ui";
 
 const nav = [
   { href: "/events", label: "Events" },
@@ -17,11 +19,11 @@ const nav = [
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <Link href="/" className={`group inline-flex items-center gap-2.5 rounded-full border border-ink px-3 py-2 ${className}`}>
+    <Link href="/" className={`group inline-flex items-center gap-2 rounded-full border border-ink px-2.5 py-2 xs:gap-2.5 xs:px-3 ${className}`}>
       <span className="relative block size-5 rounded-full bg-ink transition-transform duration-500 group-hover:rotate-180">
         <span className="absolute top-1/2 right-0.5 size-1.5 -translate-y-1/2 rounded-full bg-signal" />
       </span>
-      <span className="headline text-lg tracking-[-0.02em]">TURNOUT</span>
+      <span className="headline text-base tracking-[-0.02em] xs:text-lg">TURNOUT</span>
     </Link>
   );
 }
@@ -119,20 +121,27 @@ export function Header() {
         </div>
       </div>
 
-      {open && (
-        <div ref={menuRef} className="fixed inset-x-0 top-16 bottom-0 z-50 flex flex-col justify-between bg-ink p-[var(--gutter)] text-paper md:hidden">
-          <nav className="flex flex-col">
-            {[{ href: "/", label: "Home" }, ...nav, { href: "/host/new", label: "Create event" }].map((item) => (
-              <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="overflow-hidden border-b border-paper/20 py-3">
-                <span data-item className="display block text-[clamp(3rem,16vw,6rem)]">
-                  {item.label}
-                </span>
-              </Link>
-            ))}
-          </nav>
-          <span className="label text-paper/60">Tickets escrowed in USDC // {chain.name}</span>
-        </div>
-      )}
+      {open &&
+        createPortal(
+          <div
+            ref={menuRef}
+            className="fixed inset-0 z-30 flex flex-col justify-between bg-ink px-[var(--gutter)] pt-24 pb-[var(--gutter)] text-paper md:hidden"
+          >
+            <nav className="flex flex-col">
+              {[{ href: "/", label: "Home" }, ...nav, { href: "/host/new", label: "Create event" }].map((item) => (
+                <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="overflow-hidden border-b border-paper/20 py-3">
+                  <span data-item className="display block text-[clamp(3rem,16vw,6rem)]">
+                    {item.label}
+                  </span>
+                </Link>
+              ))}
+            </nav>
+            <span className="label text-paper/60">
+              <Joined parts={["Tickets escrowed in USDC", chain.name]} />
+            </span>
+          </div>,
+          document.body,
+        )}
     </header>
   );
 }

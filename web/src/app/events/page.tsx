@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { EventCard, EventCardSkeleton, eventGrid } from "@/components/event-card";
 import { Reveal } from "@/components/motion";
 import { PageHeader } from "@/components/page";
-import { ButtonLink, Empty, inputClass } from "@/components/ui";
+import { ButtonLink, Empty, inputClass, Joined } from "@/components/ui";
 import { phaseOf } from "@/lib/events";
 import { useAllEvents, useNow } from "@/lib/hooks";
 
@@ -37,7 +37,7 @@ export default function EventsPage() {
 
   return (
     <>
-      <PageHeader label={`${events?.length ?? "—"} events // All onchain`} title="Events" />
+      <PageHeader label={<Joined parts={[`${events?.length ?? "—"} events`, "All onchain"]} />} title="Events" />
       <section className="gutter flex flex-col gap-3 border-b border-ink py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex">
           {filters.map((f) => (

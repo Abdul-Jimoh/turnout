@@ -8,14 +8,14 @@ import { canBuy, phaseOf } from "@/lib/events";
 import { useAllEvents, useNow, useProtocolStats } from "@/lib/hooks";
 import { EventCard, EventCardSkeleton, eventGrid } from "./event-card";
 import { CountUp, Reveal } from "./motion";
-import { ButtonLink, Empty, Label, Marquee, SectionHead } from "./ui";
+import { ButtonLink, Empty, Joined, Label, Marquee, SectionHead } from "./ui";
 
 export function Hero() {
   return (
     <section className="gutter grid gap-10 pt-10 pb-12 md:pt-16 lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-6">
       <div className="flex flex-col gap-8">
         <Reveal as="span" className="label text-ink-2">
-          {"Event ticketing // Escrowed in USDC // Settled on Arc"}
+          <Joined parts={["Event ticketing", "Escrowed in USDC", "Settled on Arc"]} />
         </Reveal>
         <h1 className="display text-[clamp(4.6rem,min(21vw,19vh),13rem)]">
           <Reveal as="span" type="lines" onScroll={false} className="block">
@@ -100,9 +100,9 @@ function LiveTicket() {
           <span className="label">Nº 0042</span>
         </div>
         <div className="flex flex-col gap-1 px-6 py-6">
-          <span className="label opacity-60">Sat 18 Oct // 19:00</span>
+          <span className="label opacity-60"><Joined parts={["Sat 18 Oct", "19:00"]} /></span>
           <span className="display text-6xl">Rooftop Sessions</span>
-          <span className="label opacity-60">VIP // Victoria Island</span>
+          <span className="label opacity-60"><Joined parts={["VIP", "Victoria Island"]} /></span>
         </div>
         <div className="mx-6 border-t border-dashed border-current/40" />
         <div className="relative flex min-h-28 items-center justify-between px-6 py-6">
@@ -148,21 +148,10 @@ export function Proof() {
 
   return (
     <section className="gutter py-20 md:py-28">
-      <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
-        <h2 className="headline text-[clamp(3.2rem,11vw,8rem)]">
-          <Reveal as="span" type="lines" className="block">
-            Proof
-          </Reveal>
-          <span className="flex items-center gap-[0.15em]">
-            <span className="pill h-[0.62em] w-[1.6em]" />
-            <Reveal as="span" type="lines" className="block">
-              on
-            </Reveal>
-          </span>
-          <Reveal as="span" type="lines" className="block">
-            chain
-          </Reveal>
-        </h2>
+      <div className="mb-12 flex flex-col justify-between gap-8 xl:flex-row xl:items-end">
+        <Reveal as="h2" type="lines" className="headline text-[clamp(2.2rem,10.5vw,7.5rem)] whitespace-nowrap">
+          Proof on chain
+        </Reveal>
         <Reveal as="p" className="max-w-sm text-lg leading-snug text-ink-2">
           Every number here is read live from the Turnout contract. Nothing is self-reported, and anyone can check it on the explorer.
         </Reveal>
@@ -170,7 +159,7 @@ export function Proof() {
       <Reveal type="stagger" className="grid grid-cols-2 border-t border-l border-ink lg:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="flex flex-col gap-4 border-r border-b border-ink p-4 sm:gap-6 sm:p-6 md:p-8">
-            <Label>{`${s.label} //`}</Label>
+            <Label>{s.label}</Label>
             <CountUp value={s.value} format={s.format} className="font-mono text-[clamp(2.2rem,8vw,6rem)] leading-none font-bold tracking-tight" />
             <Label>{s.foot}</Label>
           </div>
@@ -188,7 +177,7 @@ export function OnSale() {
   return (
     <section className="gutter pb-20 md:pb-28">
       <SectionHead
-        index="01 // On sale now"
+        index={<Joined parts={["01", "On sale now"]} />}
         title="Get in the door"
         aside={
           <ButtonLink href="/events" variant="line">
@@ -223,31 +212,23 @@ const steps = [
   { n: "01", title: "Buy in USDC", body: "Pick a tier and pay from your wallet. One transaction, no approvals, gas in USDC." },
   { n: "02", title: "Held in escrow", body: "Your payment sits in the Turnout contract. The host can't touch it yet." },
   { n: "03", title: "Signed at the door", body: "Your wallet signs a code that expires in minutes. Staff scan it. It can't be faked or reused." },
-  { n: "04", title: "Paid or refunded", body: "Scanned in? The host is paid instantly. Not scanned? Claim your money back for 7 days." },
+  { n: "04", title: "Paid or refunded", body: "Scanned in? The host is paid instantly. Not scanned? Claim your money back within 7 days." },
 ];
 
 export function HowItWorks() {
   return (
     <section className="py-20 md:py-28">
       <div className="gutter mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <h2 className="headline max-w-3xl text-[clamp(2.8rem,8vw,6rem)]">
-          <Reveal as="span" type="lines" className="block">
-            The money waits
-          </Reveal>
-          <span className="flex items-center gap-[0.15em]">
-            <span className="pill h-[0.6em] w-[1.4em]" />
-            <Reveal as="span" type="lines" className="block">
-              for you
-            </Reveal>
-          </span>
-        </h2>
-        <Label>02 // How it works</Label>
+        <Reveal as="h2" type="lines" className="headline max-w-4xl text-[clamp(2.8rem,8vw,6rem)] text-balance">
+          The money waits for you
+        </Reveal>
+        <Label><Joined parts={["02", "How it works"]} /></Label>
       </div>
-      <Reveal type="stagger" className="grid gap-3 px-[var(--gutter)] sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:px-0">
+      <Reveal type="stagger" className="grid gap-3 px-[var(--gutter)] sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, i) => (
           <div
             key={s.n}
-            className={`flex min-h-64 flex-col justify-between gap-10 rounded-r-[9rem] border border-ink p-6 pr-16 md:min-h-80 md:p-8 md:pr-20 lg:aspect-[5/6] ${
+            className={`flex min-h-64 flex-col justify-between gap-10 rounded-r-[9rem] border border-ink p-6 pr-16 md:min-h-80 md:p-8 md:pr-20 xl:aspect-[5/6] ${
               i === 3 ? "bg-ink text-paper" : i === 2 ? "bg-signal" : ""
             }`}
           >
@@ -344,9 +325,9 @@ export function Faq() {
         <Reveal as="h2" type="lines" className="display text-[clamp(5rem,18vw,12rem)]">
           FAQ
         </Reveal>
-        <Label>03 // Straight answers</Label>
+        <Label><Joined parts={["03", "Straight answers"]} /></Label>
       </div>
-      <Reveal type="stagger" className="border-t border-ink">
+      <Reveal type="stagger" className="border-t border-l border-r border-ink">
         {faqs.map((f) => (
           <FaqItem key={f.q} {...f} />
         ))}
@@ -361,21 +342,23 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
   useGSAP(
     () => {
-      gsap.to(body.current, { height: open ? "auto" : 0, duration: 0.5, ease: "expo.out" });
+      gsap.to(body.current, { height: open ? "auto" : 0, duration: 0.55, ease: "expo.out" });
     },
     { dependencies: [open] },
   );
 
   return (
-    <div className="border-b border-ink">
-      <button onClick={() => setOpen((v) => !v)} className="flex w-full items-stretch text-left" aria-expanded={open}>
-        <span className="label flex-1 py-6 pr-4 text-sm sm:text-base">{q}</span>
-        <span className="flex w-14 shrink-0 items-center justify-center border-l border-ink sm:w-20">
+    <div className="group border-b border-ink transition-colors duration-300 hover:bg-ink hover:text-paper">
+      <button onClick={() => setOpen((v) => !v)} className="flex min-h-20 w-full items-stretch text-left sm:min-h-24" aria-expanded={open}>
+        <span className="label flex flex-1 items-center px-4 py-5 text-sm transition-transform duration-300 group-hover:translate-x-1.5 sm:px-8 sm:text-base">
+          {q}
+        </span>
+        <span className="flex w-14 shrink-0 items-center justify-center border-l border-ink group-hover:border-paper/25 sm:w-20">
           <span className={`block text-3xl leading-none font-light transition-transform duration-500 ${open ? "rotate-45" : ""}`}>+</span>
         </span>
       </button>
       <div ref={body} className="h-0 overflow-hidden">
-        <p className="max-w-3xl pr-16 pb-8 text-lg leading-snug text-ink-2">{a}</p>
+        <p className="border-t border-ink px-4 py-6 font-mono text-sm leading-relaxed group-hover:border-paper/25 sm:px-8 sm:text-base">{a}</p>
       </div>
     </div>
   );
@@ -390,7 +373,7 @@ export function Closing() {
       <Reveal className="mt-10 flex flex-wrap gap-3">
         <ButtonLink href="/events">Find an event</ButtonLink>
         <ButtonLink href="/host/new" variant="signal">
-          Host an event // No fee
+          <Joined parts={["Host an event", "No fee"]} />
         </ButtonLink>
       </Reveal>
     </section>
