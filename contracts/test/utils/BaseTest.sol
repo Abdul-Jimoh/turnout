@@ -45,6 +45,7 @@ abstract contract BaseTest is Test {
             name: "Builders Night",
             venue: "Yaba, Lagos",
             description: "Demos, drinks and people shipping on Arc.",
+            imageURI: "ipfs://bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy",
             startTime: start,
             endTime: end,
             checkInOpensAt: 0,

@@ -152,11 +152,12 @@ contract CreateEventTest is BaseTest {
     function test_UpdateDetails() public {
         uint256 id = _createEvent();
         vm.prank(host);
-        turnout.updateEventDetails(id, "Builders Night II", "Ikeja, Lagos", "New venue.");
+        turnout.updateEventDetails(id, "Builders Night II", "Ikeja, Lagos", "New venue.", "ipfs://new-poster");
 
         Turnout.Event memory e = turnout.getEvent(id);
         assertEq(e.name, "Builders Night II");
         assertEq(e.venue, "Ikeja, Lagos");
+        assertEq(e.imageURI, "ipfs://new-poster");
         assertEq(e.startTime, start);
     }
 
@@ -164,7 +165,7 @@ contract CreateEventTest is BaseTest {
         uint256 id = _createEvent();
         vm.prank(buyer);
         vm.expectRevert(Turnout.NotHost.selector);
-        turnout.updateEventDetails(id, "Mine now", "", "");
+        turnout.updateEventDetails(id, "Mine now", "", "", "");
     }
 
     function test_RevertWhen_UpdateDetailsAfterCancel() public {
@@ -172,7 +173,7 @@ contract CreateEventTest is BaseTest {
         vm.startPrank(host);
         turnout.cancelEvent(id);
         vm.expectRevert(Turnout.EventIsCancelled.selector);
-        turnout.updateEventDetails(id, "Back on", "", "");
+        turnout.updateEventDetails(id, "Back on", "", "", "");
         vm.stopPrank();
     }
 
@@ -181,6 +182,18 @@ contract CreateEventTest is BaseTest {
         input.venue = string(new bytes(201));
         vm.expectRevert(Turnout.InvalidDetails.selector);
         _createEvent(input);
+    }
+
+    function test_RevertWhen_ImageUriTooLong() public {
+        Turnout.EventInput memory input = _input();
+        input.imageURI = string(new bytes(201));
+        vm.expectRevert(Turnout.InvalidDetails.selector);
+        _createEvent(input);
+    }
+
+    function test_StoresPoster() public {
+        uint256 id = _createEvent();
+        assertEq(turnout.getEvent(id).imageURI, "ipfs://bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy");
     }
 
     function test_RevertWhen_TicketNotFound() public {

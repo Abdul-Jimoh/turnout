@@ -85,6 +85,7 @@ contract Lifecycle is Script {
             name: name,
             venue: "Online",
             description: "Lifecycle run on Arc testnet.",
+            imageURI: "",
             startTime: start,
             endTime: start + 1 hours,
             checkInOpensAt: 0,

@@ -54,6 +54,7 @@ contract Handler is Test {
                 name: "Fuzz Night",
                 venue: "",
                 description: "",
+                imageURI: "",
                 startTime: start,
                 endTime: start + uint64(bound(duration, 1 hours, 3 days)),
                 checkInOpensAt: 0,

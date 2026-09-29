@@ -45,6 +45,7 @@ contract Turnout is EIP712, ReentrancyGuard {
         string name;
         string venue;
         string description;
+        string imageURI;
     }
 
     struct Ticket {
@@ -64,6 +65,7 @@ contract Turnout is EIP712, ReentrancyGuard {
         string name;
         string venue;
         string description;
+        string imageURI;
         uint64 startTime;
         uint64 endTime;
         uint64 checkInOpensAt;
@@ -103,6 +105,7 @@ contract Turnout is EIP712, ReentrancyGuard {
     uint256 private constant MAX_NAME_LENGTH = 100;
     uint256 private constant MAX_VENUE_LENGTH = 200;
     uint256 private constant MAX_DESCRIPTION_LENGTH = 2000;
+    uint256 private constant MAX_IMAGE_URI_LENGTH = 200;
     uint256 private constant MAX_TIER_NAME_LENGTH = 32;
     uint256 private constant MAX_HOST_NAME_LENGTH = 50;
 
@@ -167,7 +170,7 @@ contract Turnout is EIP712, ReentrancyGuard {
     constructor() EIP712("Turnout", "1") {}
 
     function createEvent(EventInput calldata input) external returns (uint256 eventId) {
-        _checkDetails(input.name, input.venue, input.description);
+        _checkDetails(input.name, input.venue, input.description, input.imageURI);
 
         if (input.startTime <= block.timestamp || input.endTime <= input.startTime) revert InvalidTiming();
         if (input.endTime - input.startTime > MAX_EVENT_DURATION) revert InvalidTiming();
@@ -187,6 +190,7 @@ contract Turnout is EIP712, ReentrancyGuard {
         e.name = input.name;
         e.venue = input.venue;
         e.description = input.description;
+        e.imageURI = input.imageURI;
 
         Tier[] storage tiers = _tiers[eventId];
         for (uint256 i; i < tierCount; ++i) {
@@ -203,20 +207,22 @@ contract Turnout is EIP712, ReentrancyGuard {
         emit EventCreated(eventId, msg.sender);
     }
 
-    /// @notice Name, venue and description can change at any time. Schedule and tiers cannot.
+    /// @notice Name, venue, description and poster can change at any time. Schedule and tiers cannot.
     function updateEventDetails(
         uint256 eventId,
         string calldata name,
         string calldata venue,
-        string calldata description
+        string calldata description,
+        string calldata imageURI
     ) external {
         Event storage e = _hostEvent(eventId);
         if (e.cancelled) revert EventIsCancelled();
-        _checkDetails(name, venue, description);
+        _checkDetails(name, venue, description, imageURI);
 
         e.name = name;
         e.venue = venue;
         e.description = description;
+        e.imageURI = imageURI;
 
         emit EventDetailsUpdated(eventId);
     }
@@ -476,11 +482,17 @@ contract Turnout is EIP712, ReentrancyGuard {
         return holder.code.length != 0 && SignatureChecker.isValidERC1271SignatureNow(holder, digest, signature);
     }
 
-    function _checkDetails(string calldata name, string calldata venue, string calldata description) private pure {
+    function _checkDetails(
+        string calldata name,
+        string calldata venue,
+        string calldata description,
+        string calldata imageURI
+    ) private pure {
         uint256 nameLength = bytes(name).length;
         if (nameLength == 0 || nameLength > MAX_NAME_LENGTH) revert InvalidDetails();
         if (bytes(venue).length > MAX_VENUE_LENGTH) revert InvalidDetails();
         if (bytes(description).length > MAX_DESCRIPTION_LENGTH) revert InvalidDetails();
+        if (bytes(imageURI).length > MAX_IMAGE_URI_LENGTH) revert InvalidDetails();
     }
 
     function _ticketView(uint256 ticketId) private view returns (TicketView memory) {
