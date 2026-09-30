@@ -277,9 +277,9 @@ function Attendees({ event, tiers }: { event: TurnoutEvent; tiers: Tier[] }) {
 
 const GAS_OPTIONS = [
   { label: "None", value: 0n },
-  { label: "$0.50", value: 5n * 10n ** 17n },
+  { label: "$0.10", value: 10n ** 17n },
+  { label: "$0.25", value: 25n * 10n ** 16n },
   { label: "$1", value: 10n ** 18n },
-  { label: "$2", value: 2n * 10n ** 18n },
 ];
 
 function DoorDevices({ event }: { event: TurnoutEvent }) {
@@ -368,7 +368,7 @@ function DoorDevices({ event }: { event: TurnoutEvent }) {
                 </button>
               ))}
             </div>
-            <span className="text-sm text-ink-2">About 400 check-ins per dollar. You can top up later.</span>
+            <span className="text-sm text-ink-2">Each check-in costs about $0.002, so $0.25 covers around 100 guests. You can top up later.</span>
           </div>
           {input && !device && <span className="text-sm text-alert">That isn&apos;t a valid device address.</span>}
           <TxStatus {...tx} success="Device added. It will switch to scanning mode by itself." />
@@ -399,9 +399,9 @@ function DeviceRow({ event, device, index }: { event: TurnoutEvent; device: Addr
         <Button
           variant="line"
           disabled={tx.busy}
-          onClick={() => tx.send({ functionName: "addStaff", args: [event.id, device], value: 10n ** 18n })}
+          onClick={() => tx.send({ functionName: "addStaff", args: [event.id, device], value: 25n * 10n ** 16n })}
         >
-          Top up $1
+          Top up $0.25
         </Button>
         <Button variant="line" disabled={tx.busy} onClick={() => tx.send({ functionName: "removeStaff", args: [event.id, device] })}>
           Remove
