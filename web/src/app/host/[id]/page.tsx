@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { use, useMemo, useState } from "react";
-import { useAccount } from "wagmi";
+import { type Address } from "viem";
+import { useAccount, useBalance, useReadContract } from "wagmi";
+import { Scanner } from "@/components/scanner";
 import { RequireWallet, StatBox } from "@/components/page";
 import { Button, ButtonLink, Empty, Field, inputClass, Joined, Label, PhaseTag, Poster, Sep, Skeleton, TxStatus } from "@/components/ui";
+import { decodeDevice } from "@/lib/checkin";
 import { CLAIM_WINDOW, explorerUrl } from "@/lib/config";
 import { phaseOf, TicketStatus, ticketStatusLabel, withdrawable, type Tier, type TurnoutEvent } from "@/lib/events";
 import { duration, eventDate, eventDay, eventTime, sameAddress, shortAddress, usdc } from "@/lib/format";
-import { useEvent, useEventTickets, useNow, useTurnoutTx } from "@/lib/hooks";
+import { turnoutContract, useEvent, useEventTickets, useNow, useTurnoutTx } from "@/lib/hooks";
 import { uploadPoster } from "@/lib/ipfs";
 
 export default function ManageEventPage({ params }: { params: Promise<{ id: string }> }) {
@@ -58,6 +61,7 @@ function Manage({ eventId }: { eventId?: bigint }) {
     <>
       <Header event={event} />
       <Money event={event} tiers={tiers} />
+      <DoorDevices event={event} />
       <Attendees event={event} tiers={tiers} />
       <EditDetails event={event} />
       <Cancel event={event} />
@@ -268,6 +272,143 @@ function Attendees({ event, tiers }: { event: TurnoutEvent; tiers: Tier[] }) {
         </div>
       )}
     </section>
+  );
+}
+
+const GAS_OPTIONS = [
+  { label: "None", value: 0n },
+  { label: "$0.50", value: 5n * 10n ** 17n },
+  { label: "$1", value: 10n ** 18n },
+  { label: "$2", value: 2n * 10n ** 18n },
+];
+
+function DoorDevices({ event }: { event: TurnoutEvent }) {
+  const now = useNow(30_000);
+  const phase = phaseOf(event, now);
+  const staff = useReadContract({ ...turnoutContract, functionName: "getStaff", args: [event.id] });
+  const [input, setInput] = useState("");
+  const [gas, setGas] = useState(GAS_OPTIONS[2].value);
+  const [scanning, setScanning] = useState(false);
+  const tx = useTurnoutTx();
+
+  if (phase === "cancelled" || phase === "claims" || phase === "settled") return null;
+
+  const device = decodeDevice(input);
+  const devices = (staff.data ?? []) as readonly Address[];
+
+  async function add() {
+    if (!device) return;
+    const receipt = await tx.send({ functionName: "addStaff", args: [event.id, device], value: gas });
+    if (receipt) setInput("");
+  }
+
+  return (
+    <section className="gutter grid gap-6 border-b border-ink py-10 md:grid-cols-[14rem_1fr]">
+      <div className="flex flex-col gap-2">
+        <Label>At the door</Label>
+        <h2 className="headline text-3xl">Door devices</h2>
+        <p className="text-sm text-ink-2">
+          Any phone can scan tickets. Open{" "}
+          <Link href="/door" className="underline underline-offset-4">
+            /door
+          </Link>{" "}
+          on it, then add its code here. Add one per entrance.
+        </p>
+      </div>
+      <div className="flex flex-col gap-5">
+        {devices.length > 0 && (
+          <ul className="flex flex-col border-t border-ink">
+            {devices.map((d, i) => (
+              <DeviceRow key={d} event={event} device={d} index={i} />
+            ))}
+          </ul>
+        )}
+
+        <div className="flex flex-col gap-3 border border-ink p-4">
+          <span className="label">Add a device</span>
+          {scanning ? (
+            <div className="flex flex-col gap-2">
+              <Scanner
+                className="aspect-square w-full max-w-xs"
+                onScan={(raw) => {
+                  if (decodeDevice(raw)) {
+                    setInput(raw);
+                    setScanning(false);
+                  }
+                }}
+              />
+              <button onClick={() => setScanning(false)} className="label self-start underline underline-offset-4">
+                Cancel scan
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Paste the device address"
+                className={`${inputClass} font-mono text-sm`}
+                aria-label="Device address"
+              />
+              <Button variant="line" onClick={() => setScanning(true)}>
+                Scan code
+              </Button>
+            </div>
+          )}
+          <div className="flex flex-col gap-2">
+            <span className="label text-ink-2">Send it gas</span>
+            <div className="flex flex-wrap">
+              {GAS_OPTIONS.map((o) => (
+                <button
+                  key={o.label}
+                  onClick={() => setGas(o.value)}
+                  className={`label border border-ink px-4 py-2.5 not-first:-ml-px ${gas === o.value ? "bg-ink text-paper" : "hover:bg-paper-2"}`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            <span className="text-sm text-ink-2">About 400 check-ins per dollar. You can top up later.</span>
+          </div>
+          {input && !device && <span className="text-sm text-alert">That isn&apos;t a valid device address.</span>}
+          <TxStatus {...tx} success="Device added. It will switch to scanning mode by itself." />
+          <Button onClick={add} disabled={!device || tx.busy} className="self-start">
+            {tx.busy ? "Adding…" : gas ? `Add device + ${usdc(gas)} gas` : "Add device"}
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DeviceRow({ event, device, index }: { event: TurnoutEvent; device: Address; index: number }) {
+  const { data: balance } = useBalance({ address: device, query: { refetchInterval: 15_000 } });
+  const tx = useTurnoutTx();
+  const low = balance !== undefined && balance.value < 10n ** 16n;
+
+  return (
+    <li className="flex flex-col gap-3 border-b border-ink py-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-1">
+        <span className="headline text-xl">Door {index + 1}</span>
+        <span className="label text-ink-2">
+          <Joined parts={[shortAddress(device), balance ? `${usdc(balance.value)} gas` : "…"]} />
+          {low && <span className="ml-2 text-alert">Low</span>}
+        </span>
+      </div>
+      <div className="flex gap-2">
+        <Button
+          variant="line"
+          disabled={tx.busy}
+          onClick={() => tx.send({ functionName: "addStaff", args: [event.id, device], value: 10n ** 18n })}
+        >
+          Top up $1
+        </Button>
+        <Button variant="line" disabled={tx.busy} onClick={() => tx.send({ functionName: "removeStaff", args: [event.id, device] })}>
+          Remove
+        </Button>
+      </div>
+      {tx.status === "error" && <span className="text-sm text-alert">{tx.error}</span>}
+    </li>
   );
 }
 

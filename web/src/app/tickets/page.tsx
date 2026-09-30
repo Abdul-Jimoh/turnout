@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useAccount } from "wagmi";
+import { DoorPass } from "@/components/door-pass";
 import { Reveal } from "@/components/motion";
 import { PageHeader, RequireWallet } from "@/components/page";
 import { Button, ButtonLink, Empty, Joined, Label, PhaseTag, Poster, Skeleton, TxStatus } from "@/components/ui";
@@ -23,7 +25,7 @@ export default function TicketsPage() {
 
 function TicketList() {
   const { address } = useAccount();
-  const { tickets, events, isLoading } = useBuyerTickets(address);
+  const { tickets, events, isLoading, refetch } = useBuyerTickets(address);
 
   if (isLoading || !tickets || (tickets.length > 0 && !events)) {
     return (
@@ -48,14 +50,23 @@ function TicketList() {
   return (
     <section className="gutter flex flex-col gap-10 py-10 md:py-14">
       {events?.map(({ event, tiers }) => (
-        <EventTickets key={event.id.toString()} event={event} tiers={tiers} tickets={tickets.filter((t) => t.eventId === event.id)} />
+        <EventTickets
+          key={event.id.toString()}
+          event={event}
+          tiers={tiers}
+          tickets={tickets.filter((t) => t.eventId === event.id)}
+          refetch={refetch}
+        />
       ))}
     </section>
   );
 }
 
-function EventTickets({ event, tiers, tickets }: { event: TurnoutEvent; tiers: Tier[]; tickets: Ticket[] }) {
+function EventTickets({ event, tiers, tickets, refetch }: { event: TurnoutEvent; tiers: Tier[]; tickets: Ticket[]; refetch: () => void }) {
   const now = useNow();
+  const [showPass, setShowPass] = useState(false);
+  const doorsOpen = !event.cancelled && now >= Number(event.checkInOpensAt) && now <= Number(event.endTime);
+  const unscanned = tickets.filter((t) => t.status === TicketStatus.Valid);
   const phase = phaseOf(event, now);
   const refundable = tickets.filter((t) => ticketRefundable(t, event, now));
   const tx = useTurnoutTx();
@@ -93,6 +104,20 @@ function EventTickets({ event, tiers, tickets }: { event: TurnoutEvent; tiers: T
             <TicketStub key={t.id.toString()} ticket={t} tier={tiers[t.tier]} />
           ))}
         </ul>
+
+        {unscanned.length > 0 && !event.cancelled && now <= Number(event.endTime) && (
+          <div className="mt-auto flex flex-col gap-3 border-t border-ink p-4 sm:flex-row sm:items-center sm:justify-between md:p-6">
+            <span className="text-sm text-ink-2">
+              {doorsOpen
+                ? `Check-in is open. ${unscanned.length} ${unscanned.length === 1 ? "ticket" : "tickets"} ready to scan.`
+                : `Check-in opens ${eventDay(event.checkInOpensAt)}, ${eventTime(event.checkInOpensAt)}.`}
+            </span>
+            <Button onClick={() => setShowPass(true)} disabled={!doorsOpen}>
+              Show at door
+            </Button>
+          </div>
+        )}
+        {showPass && <DoorPass event={event} tiers={tiers} tickets={tickets} onClose={() => setShowPass(false)} refetch={refetch} />}
 
         {refundable.length > 0 && (
           <div className="mt-auto flex flex-col gap-3 border-t border-ink bg-signal p-4 md:p-6">
