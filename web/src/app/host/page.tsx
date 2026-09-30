@@ -120,7 +120,7 @@ function HostEventRow({ event, tiers, now }: { event: TurnoutEvent; tiers: Tier[
   return (
     <Link href={`/host/${event.id}`} className="group grid grid-cols-[5rem_1fr] gap-4 border-b border-ink py-4 transition-colors hover:bg-paper-2 sm:grid-cols-[7rem_1fr_auto] sm:items-center sm:px-2">
       <div className="row-span-2 aspect-square overflow-hidden border border-ink sm:row-span-1">
-        <Poster uri={event.imageURI} name={event.name} id={event.id} />
+        <Poster uri={event.imageURI} name={event.name} id={event.id} sizes="7rem" />
       </div>
       <div className="flex min-w-0 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">

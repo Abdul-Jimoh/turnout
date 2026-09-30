@@ -2,10 +2,20 @@ import type { Metadata } from "next";
 import { createPublicClient, http } from "viem";
 import { turnoutAbi } from "@/lib/abi";
 import { chain, turnoutAddress } from "@/lib/config";
-import { eventDate, eventTime } from "@/lib/format";
 import { imageUrl } from "@/lib/ipfs";
 
 const client = createPublicClient({ chain, transport: http() });
+
+// Link previews are rendered on the server, so the time is stated in UTC rather than the viewer's zone.
+const utc = new Intl.DateTimeFormat("en-US", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "UTC",
+});
 
 export async function generateMetadata({ params }: LayoutProps<"/events/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -13,7 +23,7 @@ export async function generateMetadata({ params }: LayoutProps<"/events/[id]">):
 
   try {
     const event = await client.readContract({ address: turnoutAddress, abi: turnoutAbi, functionName: "getEvent", args: [BigInt(id)] });
-    const when = `${eventDate(event.startTime)}, ${eventTime(event.startTime)}`;
+    const when = `${utc.format(new Date(Number(event.startTime) * 1000))} UTC`;
     const description = [when, event.venue, "Tickets in USDC, held in escrow until you're checked in."].filter(Boolean).join(" · ");
     const image = imageUrl(event.imageURI);
     return {

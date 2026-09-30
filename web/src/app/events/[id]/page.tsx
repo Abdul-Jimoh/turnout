@@ -47,7 +47,7 @@ export default function EventPage({ params }: { params: Promise<{ id: string }> 
       <div className="border-b border-ink lg:border-r lg:border-b-0">
         <div className="lg:sticky lg:top-20">
           <Reveal onScroll={false} className="aspect-4/5 max-h-[calc(100dvh-5rem)] w-full overflow-hidden">
-            <Poster uri={event.imageURI} name={event.name} id={event.id} />
+            <Poster uri={event.imageURI} name={event.name} id={event.id} sizes="(max-width: 1024px) 100vw, 45vw" />
           </Reveal>
         </div>
       </div>

@@ -84,7 +84,7 @@ function EventTickets({ event, tiers, tickets, refetch }: { event: TurnoutEvent;
   return (
     <Reveal as="article" className="grid border border-ink md:grid-cols-[14rem_1fr]">
       <Link href={`/events/${event.id}`} className="relative block aspect-video overflow-hidden border-b border-ink md:aspect-auto md:border-r md:border-b-0">
-        <Poster uri={event.imageURI} name={event.name} id={event.id} />
+        <Poster uri={event.imageURI} name={event.name} id={event.id} sizes="(max-width: 768px) 100vw, 14rem" />
       </Link>
       <div className="flex flex-col">
         <header className="flex flex-col gap-3 border-b border-ink p-4 sm:flex-row sm:items-start sm:justify-between md:p-6">

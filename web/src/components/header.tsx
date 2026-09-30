@@ -93,7 +93,7 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink bg-paper/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-ink bg-paper md:bg-paper/95 md:backdrop-blur-sm">
       <WrongNetwork />
       <div className="gutter flex h-16 items-center justify-between gap-4 md:h-20">
         <Logo />

@@ -148,12 +148,24 @@ export function TxStatus({ status, error, hash, success }: { status: string; err
 
 const posterTones = ["bg-ink text-signal", "bg-signal text-ink", "bg-paper-3 text-ink", "bg-alert text-ink", "bg-ink text-paper"];
 
-export function Poster({ uri, name, id, className = "" }: { uri?: string; name: string; id: bigint; className?: string }) {
+export function Poster({
+  uri,
+  name,
+  id,
+  className = "",
+  sizes = "(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw",
+}: {
+  uri?: string;
+  name: string;
+  id: bigint;
+  className?: string;
+  sizes?: string;
+}) {
   const src = imageUrl(uri);
   if (src) {
     return (
       <div className={`relative h-full w-full ${className}`}>
-        <Image src={src} alt={`${name} poster`} fill unoptimized sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+        <Image src={src} alt={`${name} poster`} fill sizes={sizes} className="object-cover" />
       </div>
     );
   }

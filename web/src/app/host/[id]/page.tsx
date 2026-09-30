@@ -82,7 +82,7 @@ function Header({ event }: { event: TurnoutEvent }) {
   return (
     <section className="gutter grid gap-6 border-b border-ink py-8 md:grid-cols-[8rem_1fr] md:items-end md:py-10">
       <div className="aspect-4/5 w-24 overflow-hidden border border-ink md:w-32">
-        <Poster uri={event.imageURI} name={event.name} id={event.id} />
+        <Poster uri={event.imageURI} name={event.name} id={event.id} sizes="8rem" />
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-3">
