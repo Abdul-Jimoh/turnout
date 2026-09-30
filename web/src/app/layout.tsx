@@ -10,6 +10,7 @@ const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: 
 const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: { default: "Turnout — paid at the door", template: "%s — Turnout" },
   description: "Event tickets paid in USDC and held in escrow on Arc. Hosts get paid when you're checked in. Not scanned? Take your money back.",
 };
