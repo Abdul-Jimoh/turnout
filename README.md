@@ -2,7 +2,7 @@
 
 **Event tickets paid in USDC, held in escrow on Arc, released to the host at the door.**
 
-Live on Arc mainnet: **[getturnout.site](https://www.getturnout.site)** · Demo video: _link coming_
+Live on Arc mainnet: **[getturnout.site](https://www.getturnout.site)** · Demo video: **[youtube.com/watch?v=7UnnJlZ0tMU](https://www.youtube.com/watch?v=7UnnJlZ0tMU)**
 
 When you buy a ticket to an independent event, the money goes straight to the organiser. If the event is cancelled or never happens, getting it back is slow, awkward or impossible. Honest first-time hosts have the opposite problem: they can't prove they're legit.
 
