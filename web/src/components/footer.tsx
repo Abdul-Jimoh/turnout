@@ -17,6 +17,7 @@ export function Footer() {
           <Link href="/events" className="hover:text-signal">Find events</Link>
           <Link href="/tickets" className="hover:text-signal">My tickets</Link>
           <Link href="/host/new" className="hover:text-signal">Host an event</Link>
+          <Link href="/door" className="hover:text-signal">Door scanner</Link>
         </div>
         <div className="flex flex-col gap-3">
           <span className="label text-paper/50">Verify it</span>

@@ -254,7 +254,7 @@ export function Audiences() {
   const hosts = [
     "Get paid per guest the moment they're scanned",
     "Prove you're legit: every event you run builds a public record",
-    "Multiple doors, any phone, no scanner hardware",
+    "Any phone is a scanner: open getturnout.site/door, one per entrance",
     "Sell to anyone with USDC, anywhere, without a card processor",
   ];
   return (

@@ -14,9 +14,14 @@ export default function HostPage() {
   return (
     <>
       <PageHeader label={<Joined parts={["Your events", "Your escrow"]} />} title="Host">
-        <ButtonLink href="/host/new" variant="signal">
-          + Create event
-        </ButtonLink>
+        <div className="flex flex-wrap gap-3">
+          <ButtonLink href="/door" variant="line">
+            Door scanner
+          </ButtonLink>
+          <ButtonLink href="/host/new" variant="signal">
+            + Create event
+          </ButtonLink>
+        </div>
       </PageHeader>
       <RequireWallet reason="Connect the wallet you host with to manage your events.">
         <Dashboard />

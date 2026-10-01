@@ -128,7 +128,7 @@ export function Header() {
             className="fixed inset-0 z-30 flex flex-col justify-between bg-ink px-[var(--gutter)] pt-24 pb-[var(--gutter)] text-paper md:hidden"
           >
             <nav className="flex flex-col">
-              {[{ href: "/", label: "Home" }, ...nav, { href: "/host/new", label: "Create event" }].map((item) => (
+              {[{ href: "/", label: "Home" }, ...nav, { href: "/host/new", label: "Create event" }, { href: "/door", label: "Door scanner" }].map((item) => (
                 <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="overflow-hidden border-b border-paper/20 py-3">
                   <span data-item className="display block text-[clamp(3rem,16vw,6rem)]">
                     {item.label}
